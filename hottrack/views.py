@@ -14,11 +14,12 @@ from hottrack.models import Song
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from hottrack.utils.cover import make_cover_image
+from .mixins import SearchQueryMixin
 
 import pandas as pd
 
 
-class IndexView(ListView):
+class IndexView(SearchQueryMixin, ListView):
 
     model = Song
     template_name = "hottrack/index.html"
@@ -31,12 +32,11 @@ class IndexView(ListView):
         if release_date:
             qs = qs.filter(release_date=release_date)
 
-        query = self.request.GET.get("query", "").strip()
-        if query:
+        if self.query:
             qs = qs.filter(
-                Q(name__icontains=query)
-                | Q(artist_name__icontains=query)
-                | Q(album_name__icontains=query)
+                Q(name__icontains=self.query)
+                | Q(artist_name__icontains=self.query)
+                | Q(album_name__icontains=self.query)
             )
         return qs
 
