@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_bootstrap5",
     "core",
+    "hottrack",
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,17 @@ from django.contrib.messages import constants as messages_constants  # noqa
 
 if DEBUG:
     MESSAGE_LEVEL = messages_constants.DEBUG
+
+
+if DEBUG:
+    INSTALLED_APPS += [
+        "debug_toolbar",
+    ]
+
+if DEBUG:
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ] + MIDDLEWARE
+
+
+INTERNAL_IPS = ["127.0.0.1"]

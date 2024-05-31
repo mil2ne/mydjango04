@@ -7,6 +7,7 @@ from urllib.request import urlopen
 from django.db.models import QuerySet, Q
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
+from django.views.generic import DetailView
 
 from hottrack.models import Song
 
@@ -49,6 +50,22 @@ def index(request: HttpRequest, release_date: datetime.date = None) -> HttpRespo
         template_name="hottrack/index.html",
         context={"song_list": song_qs, "query": query},
     )
+
+
+class SongDetailView(DetailView):
+    model = Song
+
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        melon_uid = self.kwargs.get("melon_uid")
+        if melon_uid:
+            return get_object_or_404(queryset, melon_uid=melon_uid)
+        return super().get_object(queryset)
+
+
+song_detail = SongDetailView.as_view()
 
 
 # def export_csv(request: HttpRequest) -> HttpResponse:
