@@ -39,7 +39,9 @@
             <ul>
                 {% for date in date_list %}
                     <li>
-                        {{ date|date:"Y년 m월 d일" }}
+                        <a href="{% url 'song_archive_day' date.year date.month date.day %}">
+                            {{ date|date:"Y년 m월 d일" }}
+                        </a>
                     </li>
                 {% endfor %}
             </ul>
