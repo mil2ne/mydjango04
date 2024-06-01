@@ -7,7 +7,7 @@ from urllib.request import urlopen
 from django.db.models import QuerySet, Q
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
-from django.views.generic import DetailView, ListView, YearArchiveView
+from django.views.generic import DetailView, ListView, YearArchiveView, MonthArchiveView
 
 from hottrack.models import Song
 
@@ -138,3 +138,9 @@ class SongYearArchiveView(YearArchiveView):
     model = Song
     date_field = "release_date"
     make_object_list = True
+
+
+class SongMonthArchiveView(MonthArchiveView):
+    model = Song
+    date_field = "release_date"
+    month_format = "%m"
