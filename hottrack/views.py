@@ -14,6 +14,7 @@ from django.views.generic import (
     MonthArchiveView,
     DayArchiveView,
     TodayArchiveView,
+    WeekArchiveView,
 )
 
 from hottrack.models import Song
@@ -173,3 +174,9 @@ class SongTodayArchiveView(TodayArchiveView):
                 return self._get_dated_items(datetime.date(year, month, day))
             except ValueError:
                 return super().get_dated_items()
+
+
+class SongWeekArchiveView(WeekArchiveView):
+    model = Song
+    date_field = "release_date"
+    week_format = "%W"
