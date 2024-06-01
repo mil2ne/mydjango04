@@ -7,7 +7,7 @@ from urllib.request import urlopen
 from django.db.models import QuerySet, Q
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, YearArchiveView
 
 from hottrack.models import Song
 
@@ -132,3 +132,9 @@ def cover_png(request, pk):
     cover_image.save(response, format="png")
 
     return response
+
+
+class SongYearArchiveView(YearArchiveView):
+    model = Song
+    date_field = "release_date"
+    make_object_list = True
