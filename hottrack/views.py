@@ -15,6 +15,7 @@ from django.views.generic import (
     DayArchiveView,
     TodayArchiveView,
     WeekArchiveView,
+    ArchiveIndexView,
 )
 
 from hottrack.models import Song
@@ -180,3 +181,17 @@ class SongWeekArchiveView(WeekArchiveView):
     model = Song
     date_field = "release_date"
     week_format = "%W"
+
+
+class SongArchiveIndexView(ArchiveIndexView):
+    model = Song
+    date_field = "release_date"
+    paginate_by = 10
+
+    def get_date_list_period(self):
+        return self.kwargs.get("date_list_period", self.date_list_period)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data["date_list_period"] = self.get_date_list_period()
+        return context_data
