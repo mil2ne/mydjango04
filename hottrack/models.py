@@ -4,7 +4,9 @@ from datetime import date
 from typing import Dict
 from urllib.parse import quote
 from django.db import models
+from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.text import slugify
 
 
 # 파이썬 3.7부터 지원
@@ -20,6 +22,30 @@ class Song(models.Model):
     genre = models.CharField(max_length=100)
     release_date = models.DateField()
     like_count = models.PositiveIntegerField()
+    slug = models.SlugField(allow_unicode=True, blank=True)
+
+    class Meta:
+        indexes = [models.Index(fields=["slug"])]
+
+    def save(self, *args, **kwargs):
+        self.slugify()
+        super().save(*args, **kwargs)
+
+    def slugify(self, force=False):
+        if force or not self.slug:
+            self.slug = slugify(self.name, allow_unicode=True)
+
+    def get_absolute_url(self) -> str:
+        slug = slugify(self.name, allow_unicode=True)
+        return reverse(
+            viewname="song_date_detail",
+            args=[
+                self.release_date.year,
+                self.release_date.month,
+                self.release_date.day,
+                slug,
+            ],
+        )
 
     @property
     def cover_image_tag(self):

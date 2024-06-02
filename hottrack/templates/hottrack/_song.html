@@ -2,7 +2,7 @@
 
 <div class="card shadow-sm">
     {# refs: https://picsum.photos/ #}
-    <img src="{{ song.cover_url }}" alt="{{ song.name }}" class="cart-img-top" />
+    <img src="{{ song.cover_url }}" alt="{{ song.name }}" class="cart-img-top"/>
 
     <div class="card-body">
         <div class="card-text">
@@ -12,10 +12,10 @@
         </div>
         <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group">
-                <a href="/hottrack/{{ song.pk }}/" type="button"
-       class="btn btn-sm btn-outline-primary">Detail</a>
+                <a href="{{ song.get_absolute_url }}" type="button"
+                   class="btn btn-sm btn-outline-primary">Detail</a>
                 <a href="/hottrack/melon-{{ song.melon_uid }}/" type="button"
-                class="btn btn-sm btn-outline-primary"
+                   class="btn btn-sm btn-outline-primary"
                 >Detail#2</a>
                 <a href="{{ song.melon_detail_url }}" type="button" class="btn btn-sm btn-outline-danger">Melon</a>
                 <a href="{{ song.youtube_search_url }}" type="button" class="btn btn-sm btn-outline-danger">Youtube</a>
