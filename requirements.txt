@@ -4,3 +4,9 @@ requests==2.32.3
 pillow==10.3.0
 pandas==2.2.2
 django-debug-toolbar==4.4.2
+django-extensions==3.2.3
+#pymysql==1.1.1
+#cryptography==41.0.7
+
+psycopg2-binary==2.9.9
+ipython

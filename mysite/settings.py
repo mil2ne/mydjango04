@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_bootstrap5",
     "core",
+    "django_extensions",
     "hottrack",
+    "blog",
 ]
 
 MIDDLEWARE = [
@@ -77,13 +79,38 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
+# import pymysql
+#
+# pymysql.install_as_MySQLdb()
+#
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "HOST": "localhost",  # 서버 주소
+#         "PORT": "3306",  # 서버 포트
+#         "NAME": "mysql_db",  # 데이터베이스 명
+#         "USER": "mysql_user",  # 유저명
+#         "PASSWORD": "mysql_pw",  # 암호
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": "localhost",  # 서버 주소
+        "PORT": "5432",  # 서버 포트
+        "NAME": "mydb",  # 데이터베이스 명
+        "USER": "myuser",  # 유저명
+        "PASSWORD": "mypw",  # 암호
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
