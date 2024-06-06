@@ -5,6 +5,8 @@ from django.db import models
 from django.db.models import UniqueConstraint
 from django.utils.text import slugify
 
+from core.model_field import IPv4AddressIntegerField
+
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -73,3 +75,8 @@ class Post(models.Model):
     def __str__(self):
         # choices 속성을 사용한 필드는 get_필드명_display() 함수를 통해 레이블 조회를 지원합니다.
         return f"{self.title} ({self.get_status_display()})"
+
+
+class AccessLog(models.Model):
+    ip_generic = models.GenericIPAddressField(protocol="IPv4")
+    ip_int = IPv4AddressIntegerField()
