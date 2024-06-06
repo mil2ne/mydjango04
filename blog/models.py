@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
 
 
 class Category(models.Model):
@@ -29,6 +30,11 @@ class Post(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
+    slug = models.SlugField(
+        max_length=120,
+        allow_unicode=True,
+        help_text="title 필드로 부터 자동생성합니다.",
+    )
     status = models.CharField(
         # 선택지 값 크기에 맞춰 최대 길이를 지정
         max_length=1,
@@ -44,6 +50,16 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)  # 매 수정시각을 자동 저장
 
     objects = PostQuerySet.as_manager()
+
+    def slugify(self, force=False):
+        if force or not self.slug:
+            self.slug = slugify(self.title, allow_unicode=True)
+            self.slug = self.slug[:120]
+
+    def save(self, *args, **kwargs):
+        # save 시에 slug 필드를 자동으로 채워줌
+        self.slugify()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         # choices 속성을 사용한 필드는 get_필드명_display() 함수를 통해 레이블 조회를 지원합니다.

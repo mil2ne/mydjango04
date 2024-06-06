@@ -25,6 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path(route="core/", view=include("core.urls")),
     path("hottrack/", include("hottrack.urls")),
+    path("blog/", include("blog.urls")),
     path("", RedirectView.as_view(url="/hottrack/")),
 ]
 
