@@ -1,5 +1,8 @@
+from uuid import uuid4
+
 from django.conf import settings
 from django.db import models
+from django.db.models import UniqueConstraint
 from django.utils.text import slugify
 
 
@@ -54,12 +57,18 @@ class Post(models.Model):
     def slugify(self, force=False):
         if force or not self.slug:
             self.slug = slugify(self.title, allow_unicode=True)
-            self.slug = self.slug[:120]
+            self.slug = self.slug[:112]
+            # 제목으로 만든 slug 문자열 뒤에 uuid 를 붙여 slug 의 유일성을 확보
+            self.slug += "-" + uuid4().hex[:8]
 
     def save(self, *args, **kwargs):
         # save 시에 slug 필드를 자동으로 채워줌
         self.slugify()
         super().save(*args, **kwargs)
+
+    class Meta:
+        # unique=True 보다 강력한 Unique 제약사항 추가 방법
+        constraints = [UniqueConstraint("slug", name="unique_slug")]
 
     def __str__(self):
         # choices 속성을 사용한 필드는 get_필드명_display() 함수를 통해 레이블 조회를 지원합니다.
