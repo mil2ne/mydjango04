@@ -1,8 +1,9 @@
 from uuid import uuid4
 
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models import UniqueConstraint
+from django.db.models import UniqueConstraint, Q
 from django.utils.text import slugify
 
 from core.model_field import IPv4AddressIntegerField, BooleanYNField
@@ -71,6 +72,8 @@ class Post(models.Model):
     class Meta:
         # unique=True 보다 강력한 Unique 제약사항 추가 방법
         constraints = [UniqueConstraint("slug", name="unique_slug")]
+        verbose_name = "포스팅"
+        verbose_name_plural = "포스팅 목록"
 
     def __str__(self):
         # choices 속성을 사용한 필드는 get_필드명_display() 함수를 통해 레이블 조회를 지원합니다.
@@ -93,3 +96,21 @@ class Article(models.Model):
         default="N",
     )
     is_public_yn = BooleanYNField(default=False)
+
+
+class Review(models.Model):
+    message = models.TextField()
+    rating = models.SmallIntegerField(
+        # validators=[
+        #     MinValueValidator(1),
+        #     MaxValueValidator(5),
+        # ]
+    )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=Q(rating__gte=1, rating__lte=5),
+                name="blog_review_rating_gte_1_lte_5",
+            )
+        ]
