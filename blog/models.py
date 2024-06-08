@@ -80,6 +80,7 @@ class Post(TimestampedModel):
         constraints = [UniqueConstraint("slug", name="unique_slug")]
         verbose_name = "포스팅"
         verbose_name_plural = "포스팅 목록"
+        permissions = [("view_premium_post", "프리미엄 블로그를 볼 수 있음")]
 
     def __str__(self):
         # choices 속성을 사용한 필드는 get_필드명_display() 함수를 통해 레이블 조회를 지원합니다.
