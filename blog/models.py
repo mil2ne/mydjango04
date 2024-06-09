@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint, Q
+from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.text import slugify
 
@@ -134,6 +135,18 @@ class Tag(models.Model):
 
     class Meta:
         ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(
+                # fields=["name"],
+                Lower("name"),
+                name="blog_tag_name_unique",
+            )
+        ]
         indexes = [
-            models.Index(fields=["name"]),
+            # models.Index(fields=["name"]),
+            models.Index(
+                fields=["name"],
+                name="blog_tag_name_like",
+                opclasses=["varchar_pattern_ops"],
+            )
         ]
