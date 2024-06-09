@@ -22,7 +22,7 @@ from django.views.generic import RedirectView
 from mysite import settings
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path(settings.ADMIN_PREFIX, admin.site.urls),
     path(route="core/", view=include("core.urls")),
     path("hottrack/", include("hottrack.urls")),
     path("blog/", include("blog.urls")),

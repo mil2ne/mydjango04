@@ -175,3 +175,4 @@ if DEBUG:
 
 
 INTERNAL_IPS = ["127.0.0.1"]
+ADMIN_PREFIX = "secret-admin/"
