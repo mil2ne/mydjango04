@@ -20,7 +20,7 @@ class Song(models.Model):
     cover_url = models.URLField()
     lyrics = models.TextField()
     genre = models.CharField(max_length=100)
-    release_date = models.DateField()
+    release_date = models.DateField(verbose_name="발매일")
     like_count = models.PositiveIntegerField()
     slug = models.SlugField(max_length=100, allow_unicode=True, blank=True)
 
