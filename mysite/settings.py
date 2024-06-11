@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "hottrack",
     "blog",
+    "school",
     "shop",
 ]
 
