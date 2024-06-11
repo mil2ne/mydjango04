@@ -3,7 +3,17 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    friend_set = models.ManyToManyField(
+        to="self", blank=True, symmetrical=True, related_query_name="friend_user"
+    )
+
+    follower_set = models.ManyToManyField(
+        to="self",
+        blank=True,
+        symmetrical=False,
+        related_name="following_set",
+        related_query_name="following",
+    )
 
 
 class SuperUserManager(models.Manager):
