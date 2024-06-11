@@ -70,7 +70,12 @@ class Post(TimestampedModel):
     )
     content = models.TextField()
     tag_set = models.ManyToManyField(
-        "Tag", blank=True, related_name="blog_post_set", related_query_name="blog_post"
+        "Tag",
+        blank=True,
+        related_name="blog_post_set",
+        related_query_name="blog_post",
+        through="PostTagRelation",
+        through_fields=("post", "tag"),
     )
 
     objects = PostQuerySet.as_manager()
@@ -164,6 +169,20 @@ class Tag(models.Model):
                 fields=["name"],
                 name="blog_tag_name_like",
                 opclasses=["varchar_pattern_ops"],
+            )
+        ]
+
+
+class PostTagRelation(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["post", "tag"],
+                name="blog_post_tag_relation_unique",
             )
         ]
 
