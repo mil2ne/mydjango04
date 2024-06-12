@@ -9,6 +9,7 @@ from hottrack.models import Song
 
 class ReleaseDateFilter(admin.SimpleListFilter):
     title = Song._meta.get_field("release_date").verbose_name
+
     parameter_name = "release_date_filter"
 
     def lookups(self, request, model_admin):
