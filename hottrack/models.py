@@ -12,6 +12,8 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.text import slugify
 
+from mysite import settings
+
 
 class Artist(models.Model):
     id = models.PositiveIntegerField(primary_key=True)
@@ -112,3 +114,17 @@ class Song(models.Model):
         )
         instance.slugify()
         return instance
+
+
+class Comment(models.Model):
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="hottrack_comment_set",
+        related_query_name="hottrack_comment",
+    )
+
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
