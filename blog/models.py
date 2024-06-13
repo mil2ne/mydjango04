@@ -5,6 +5,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint, Q
 from django.db.models.functions import Lower
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.text import slugify
 
@@ -87,10 +89,10 @@ class Post(TimestampedModel):
             # 제목으로 만든 slug 문자열 뒤에 uuid 를 붙여 slug 의 유일성을 확보
             self.slug += "-" + uuid4().hex[:8]
 
-    def save(self, *args, **kwargs):
-        # save 시에 slug 필드를 자동으로 채워줌
-        self.slugify()
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # save 시에 slug 필드를 자동으로 채워줌
+    #     self.slugify()
+    #     super().save(*args, **kwargs
 
     class Meta:
         # unique=True 보다 강력한 Unique 제약사항 추가 방법
@@ -102,6 +104,12 @@ class Post(TimestampedModel):
     def __str__(self):
         # choices 속성을 사용한 필드는 get_필드명_display() 함수를 통해 레이블 조회를 지원합니다.
         return f"{self.title} ({self.get_status_display()})"
+
+
+@receiver(pre_save, sender=Post)
+def pre_save_on_save(sender, instance: Post, **kwargs):
+    print("pre_save_on_save 호출")
+    instance.slugify()
 
 
 class Comment(TimestampedModel):
