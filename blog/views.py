@@ -25,3 +25,10 @@ def post_premium_detail(request, slug):
 
 def premium_user_guide(request):
     return HttpResponse("프리미엄 유저 가이드 페이지")
+
+
+def post_list(request):
+    post_qs = Post.objects.all()
+    post_qs = post_qs.select_related("author")
+    post_qs = post_qs.prefetch_related("tag_set", "comment_set", "comment_set__author")
+    return render(request, "blog/post_list.html", {"post_list": post_qs})
