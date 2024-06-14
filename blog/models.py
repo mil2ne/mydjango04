@@ -9,6 +9,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.text import slugify
+from django_lifecycle import LifecycleModelMixin, hook, BEFORE_UPDATE, AFTER_UPDATE
 
 from core.model_field import IPv4AddressIntegerField, BooleanYNField
 
@@ -43,7 +44,7 @@ class PostQuerySet(models.QuerySet):
         return super().create(**kwargs)
 
 
-class Post(TimestampedModel):
+class Post(LifecycleModelMixin, models.Model):
     class Status(models.TextChoices):  # 문자열 선택지
         DRAFT = "D", "초안"  # 상수, 값, 레이블
         PUBLISHED = "P", "발행"
@@ -82,6 +83,9 @@ class Post(TimestampedModel):
 
     objects = PostQuerySet.as_manager()
 
+    created_at = models.DateTimeField(auto_now_add=True)  # 최초 생성시각을 자동 저장
+    updated_at = models.DateTimeField(auto_now_add=True)
+
     def slugify(self, force=False):
         if force or not self.slug:
             self.slug = slugify(self.title, allow_unicode=True)
@@ -93,6 +97,15 @@ class Post(TimestampedModel):
     #     # save 시에 slug 필드를 자동으로 채워줌
     #     self.slugify()
     #     super().save(*args, **kwargs
+
+    @hook(BEFORE_UPDATE, when="content", has_changed=True)
+    def on_changed_content(self):
+        print("content 필드 변경으로, updated_at 을 갱신합니다. ")
+        self.updated_at = timezone.now()
+
+    @hook(AFTER_UPDATE, when="status", was=Status.DRAFT, is_now=Status.PUBLISHED)
+    def on_published(self):
+        print("저자에게 이메일을 보냅니다.")
 
     class Meta:
         # unique=True 보다 강력한 Unique 제약사항 추가 방법
