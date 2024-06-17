@@ -8,7 +8,20 @@ from django.dispatch import receiver
 
 # Create your models here.
 class Post(models.Model):
+    class Status(models.TextChoices):
+        DRAFT = (
+            "D",
+            "초안",
+        )
+        PUBLISHED = "P", "발행"
+
     title = models.CharField(max_length=100)
+    content = models.TextField(blank=True)
+    status = (
+        models.CharField(max_length=1, choices=Status.choices, default=Status.DRAFT),
+    )
+    photo = models.ImageField(blank=True)
+    created_date = models.DateField(auto_now_add=True)
     comment_set = GenericRelation("Comment", related_query_name="post")
 
 
