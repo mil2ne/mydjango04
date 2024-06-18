@@ -16,6 +16,7 @@ def post_new(request):
             post = form.save(commit=False)
             post.ip = request.META["REMOTE_ADDR"]
             post.save()
+            form.save_m2m()
 
             return redirect("/")
         else:
@@ -38,6 +39,7 @@ def post_edit(request, pk):
 
             post.ip = request.META["REMOTE_ADDR"]
             post.save()
+            form.save_m2m()
 
             return redirect("/")
 

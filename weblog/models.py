@@ -26,6 +26,13 @@ class Post(models.Model):
     ip = models.GenericIPAddressField()
     comment_set = GenericRelation("Comment", related_query_name="post")
 
+    tag_set = models.ManyToManyField(
+        "blog.Tag",
+        blank=True,
+        related_name="weblog_post_set",
+        related_query_name="weblog_post",
+    )
+
 
 @receiver(pre_delete, sender=Post)
 def set_value_or_delete(sender, instance: Post, **kwargs):
