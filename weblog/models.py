@@ -17,9 +17,10 @@ class Post(models.Model):
 
     title = models.CharField(max_length=100)
     content = models.TextField(blank=True)
-    status = (
-        models.CharField(max_length=1, choices=Status.choices, default=Status.DRAFT),
+    status = models.CharField(
+        max_length=1, choices=Status.choices, default=Status.DRAFT
     )
+
     photo = models.ImageField(blank=True)
     created_date = models.DateField(auto_now_add=True)
     comment_set = GenericRelation("Comment", related_query_name="post")
