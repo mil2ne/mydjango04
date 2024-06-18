@@ -23,6 +23,7 @@ class Post(models.Model):
 
     photo = models.ImageField(blank=True)
     created_date = models.DateField(auto_now_add=True)
+    ip = models.GenericIPAddressField()
     comment_set = GenericRelation("Comment", related_query_name="post")
 
 

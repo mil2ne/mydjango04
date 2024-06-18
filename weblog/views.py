@@ -13,7 +13,9 @@ def post_new(request):
         if form.is_valid():
             print("form.cleand_data : ", form.cleaned_data)
 
-            form.save()
+            post = form.save(commit=False)
+            post.ip = request.META["REMOTE_ADDR"]
+            post.save()
 
             return redirect("/")
         else:
@@ -32,7 +34,10 @@ def post_edit(request, pk):
         if form.is_valid():
             print("form.cleand_data : ", form.cleaned_data)
 
-            post = form.save(commit=True)
+            post = form.save(commit=False)
+
+            post.ip = request.META["REMOTE_ADDR"]
+            post.save()
 
             return redirect("/")
 
