@@ -1,12 +1,19 @@
 from django.core.files.uploadedfile import UploadedFile
 from django.shortcuts import render, redirect, get_object_or_404, resolve_url
+from django.urls import reverse_lazy
 
-from vanilla import FormView, CreateView, UpdateView
+from vanilla import FormView, CreateView, UpdateView, DeleteView, ListView
 
-# from django.views.generic import FormView
+from django.views.generic import DeleteView as DjangoDeleteView
 
-from weblog.forms import PostForm
+from weblog.forms import PostForm, ConfirmDeleteForm
 from weblog.models import Post
+
+
+# def index(request):
+#     return render(request, "weblog/index.html")
+
+index = ListView.as_view(model=Post, template_name="weblog/index.html")
 
 
 def post_detail(request, pk):
@@ -63,3 +70,20 @@ class PostUpdateView(UpdateView):
 
 
 post_edit = PostUpdateView.as_view()
+
+
+# def post_delete(request, pk):
+#     post = get_object_or_404(Post, pk=pk)
+#     if request.method == "POST":
+#         post.delete()
+#         return redirect("weblog:post_new")
+#     return render(request, "weblog/post_confirm_delete.html", {"post": post})
+
+
+class PostDeleteView(DjangoDeleteView):
+    model = Post
+    form_class = ConfirmDeleteForm
+    success_url = reverse_lazy("weblog:index")
+
+
+post_delete = PostDeleteView.as_view()
