@@ -1,5 +1,5 @@
 from django.core.files.uploadedfile import UploadedFile
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, resolve_url
 
 from vanilla import FormView, CreateView, UpdateView
 
@@ -9,18 +9,29 @@ from weblog.forms import PostForm
 from weblog.models import Post
 
 
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    return render(request, "weblog/post_detail.html", {"post": post})
+
+
 class PostCreateView(CreateView):
     model = Post
     form_class = PostForm
     # template_name = "weblog/post_form.html"
-    success_url = "/"
+    # success_url = "/"
 
     def form_valid(self, form):
-        post = form.save(commit=False)
-        post.ip = self.request.META["REMOTE_ADDR"]
+        self.object = form.save(commit=False)
+        self.object.ip = self.request.META["REMOTE_ADDR"]
         # post.save()
         # form.save_m2m()
         return super().form_valid(form)
+
+    # def get_success_url(self) -> str:
+    #     # return f"/weblog/{self.object.pk}"
+    #     # return resolve_url("weblog:post_detail", self.object.pk)
+    #     # return self.object.get_absolute_url()
+    #     return resolve_url(self.object)
 
 
 post_new = PostCreateView.as_view()
@@ -30,7 +41,7 @@ class PostUpdateView(UpdateView):
     model = Post
     form_class = PostForm
     # template_name = "weblog/post_form.html"
-    success_url = "/"
+    # success_url = "/"
 
     # def get_form_kwargs(self):
     #     post_pk = self.kwargs["pk"]
