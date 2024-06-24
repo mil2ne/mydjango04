@@ -25,6 +25,7 @@ from mysite import settings
 urlpatterns = [
     path(settings.ADMIN_PREFIX, admin.site.urls),
     path(route="core/", view=include("core.urls")),
+    path("accounts/", include("accounts.urls")),
     path("hottrack/", include("hottrack.urls")),
     path("blog/", include("blog.urls")),
     path("shop/", include("shop.urls")),
