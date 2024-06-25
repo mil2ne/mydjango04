@@ -1,0 +1,21 @@
+{% include "django/forms/widgets/input.html" %}
+
+<div style="font-size: 0.5em"></div>
+
+<script>
+    (function () {
+        console.log("CounterTextInput widget")
+
+        const labelDom = document.currentScript.previousElementSibling;
+        const widgetDom = labelDom.previousElementSibling
+
+        function apply() {
+
+            labelDom.innerHTML = `${widgetDom.value.length} 글자`;
+
+        }
+
+        widgetDom.addEventListener("input", apply)
+        apply()
+    })();
+</script>

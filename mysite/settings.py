@@ -168,6 +168,11 @@ from django.contrib.messages import constants as messages_constants  # noqa
 if DEBUG:
     MESSAGE_LEVEL = messages_constants.DEBUG
 
+if DEBUG:
+    FORM_RENDERER = "core.forms.renderers.NoCacheDjangoTemplates"
+
+if DEBUG:
+    INSTALLED_APPS += ["django.forms"]
 
 if DEBUG:
     INSTALLED_APPS += [

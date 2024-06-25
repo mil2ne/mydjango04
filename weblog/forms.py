@@ -1,5 +1,6 @@
 from django import forms
 
+from core.forms.widgets import CounterTextInput
 from .models import Post
 
 
@@ -7,6 +8,7 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ["title", "content", "status", "photo", "tag_set"]
+        widgets = {"title": CounterTextInput}
 
 
 class ConfirmDeleteForm(forms.Form):
