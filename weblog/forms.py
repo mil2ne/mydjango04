@@ -1,14 +1,14 @@
 from django import forms
 
-from core.forms.widgets import CounterTextInput
+from core.forms.widgets import CounterTextInput, IosSwitchInput
 from .models import Post
 
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ["title", "content", "status", "photo", "tag_set"]
-        widgets = {"title": CounterTextInput}
+        fields = ["title", "content", "status", "photo", "tag_set", "is_public"]
+        widgets = {"title": CounterTextInput, "is_public": IosSwitchInput}
 
 
 class ConfirmDeleteForm(forms.Form):
