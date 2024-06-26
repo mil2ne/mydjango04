@@ -1,6 +1,10 @@
 from django import forms
 
-from core.forms.widgets import CounterTextInput, IosSwitchInput
+from core.forms.widgets import (
+    CounterTextInput,
+    IosSwitchInput,
+    PreviewClearableFileInput,
+)
 from .models import Post
 
 
@@ -8,7 +12,11 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ["title", "content", "status", "photo", "tag_set", "is_public"]
-        widgets = {"title": CounterTextInput, "is_public": IosSwitchInput}
+        widgets = {
+            "title": CounterTextInput,
+            "is_public": IosSwitchInput,
+            "photo": PreviewClearableFileInput,
+        }
 
 
 class ConfirmDeleteForm(forms.Form):

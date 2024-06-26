@@ -1,4 +1,4 @@
-from django.forms import TextInput, CheckboxInput
+from django.forms import TextInput, CheckboxInput, ClearableFileInput
 
 
 class CounterTextInput(TextInput):
@@ -17,3 +17,7 @@ class IosSwitchInput(CheckboxInput):
                 "core/forms/widgets/ios_form_switch.css",
             ]
         }
+
+
+class PreviewClearableFileInput(ClearableFileInput):
+    template_name = "core/forms/widgets/preview_clearable_file.html"
