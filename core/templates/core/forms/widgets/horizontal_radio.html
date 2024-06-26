@@ -1,0 +1,10 @@
+{# core/forms/widgets/horizontal_radio.html #}
+
+<style>
+    #{{ widget.attrs.id }}  > div {
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+
+{% include "django/forms/widgets/radio.html" %}

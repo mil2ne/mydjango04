@@ -3,8 +3,10 @@ from django.core.files import File
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from vanilla import CreateView
 
-from blog.models import Post
+from blog.forms import ReviewForm
+from blog.models import Post, Review
 
 
 # Create your views here.
@@ -87,3 +89,6 @@ def post_new(request):
             "errors": errors,
         },
     )
+
+
+review_new = CreateView.as_view(model=Review, form_class=ReviewForm)
