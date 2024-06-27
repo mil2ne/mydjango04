@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
@@ -50,6 +51,16 @@ class Profile(models.Model):
         related_query_name="profile",
     )
     address = models.CharField(max_length=100, blank=True)
+    phone_number = models.CharField(
+        max_length=13,
+        blank=True,
+        validators=[
+            RegexValidator(
+                r"^01\d[ -]?\d{4}[ -]?\d{4}$",
+                message="휴대폰 번호 포맷으로 입력하세요.",
+            )
+        ],
+    )
     point = models.PositiveIntegerField(default=0)
 
     photo = models.ImageField(upload_to="profile/photo", blank=True)
