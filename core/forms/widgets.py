@@ -1,4 +1,10 @@
-from django.forms import TextInput, CheckboxInput, ClearableFileInput, RadioSelect
+from django.forms import (
+    TextInput,
+    CheckboxInput,
+    ClearableFileInput,
+    RadioSelect,
+    Select,
+)
 
 
 class CounterTextInput(TextInput):
@@ -25,3 +31,18 @@ class PreviewClearableFileInput(ClearableFileInput):
 
 class HorizontalRadioSelect(RadioSelect):
     template_name = "core/forms/widgets/horizontal_radio.html"
+
+
+class StarRatingSelect(Select):
+    template_name = "core/forms/widgets/star_rating_select.html"
+
+    class Media:
+        css = {
+            "all": [
+                "core/star-rating-js/4.3.0/star-rating.min.css",
+            ]
+        }
+
+        js = [
+            "core/star-rating-js/4.3.0/star-rating.min.js",
+        ]
