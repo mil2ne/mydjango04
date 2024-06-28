@@ -1,16 +1,18 @@
 {% include "django/forms/widgets/date.html" %}
 
+{{ date_picker_options|json_script }}
+
 <script>
     (function () {
         // script 바로 위 div 요소 가져옴
-        const dateDom = document.currentScript.previousElementSibling
+        const optionsDom = document.currentScript.previousElementSibling
+        const dateDom = optionsDom.previousElementSibling
 
         dateDom.setAttribute("autocomplete", "off")
         dateDom.setAttribute("readonly", "readonly")
 
-        const options = {
-            format:"yyyy-mm-dd"
-        }
+
+        const options = JSON.parse(optionsDom.textContent)
 
         const datepicker = new Datepicker(dateDom, options)
     })()

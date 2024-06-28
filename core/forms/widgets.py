@@ -1,5 +1,7 @@
+import dataclasses
 import re
-from typing import Tuple
+from datetime import datetime
+from typing import Tuple, Union, List, Callable, Dict
 
 from django.forms import (
     TextInput,
@@ -102,16 +104,58 @@ class PhoneNumberInput(MultiWidget):
         return "".join((value or "") for value in values)
 
 
+@dataclasses.dataclass
+class DatePickerOptions:
+    # 대표적인 옵션 몇 가지만 적용해봤습니다.
+    datesDisabled: Union[
+        List[datetime.date],  # date 인스턴스로 구성된 리스트 이거나
+        Callable[
+            [], List[datetime.date]
+        ],  # 인자없고 date 인스턴스로 구성된 리스트를 반환하는 함수
+    ] = dataclasses.field(
+        default_factory=list
+    )  # 디폴트로 빈 리스트
+    format: str = "yyyy-mm-dd"  # 날짜 포맷
+    minDate: Union[
+        str, int, datetime.date, Callable[[], Union[str, int, datetime.date]]
+    ] = None  # 최소 날짜 (문자열, 숫자, date 인스턴스) 지원 및 함수로도 지원
+    maxDate: Union[
+        str, int, datetime.date, Callable[[], Union[str, int, datetime.date]]
+    ] = None  # 최대 날짜 (문자열, 숫자, date 인스턴스) 지원 및 함수로도 지원
+    todayButton: bool = False  # 투데이 버튼 활성화 여부
+    todayHighlight: bool = True
+
+    # dataclasses.asdict는 함수 변환을 지원하지 않기에 직접 변환 함수를 만들었습니다.
+    def to_dict(self) -> Dict[str, Union[str, int, List[int], List[datetime.date]]]:
+        result = {}
+        for field in dataclasses.fields(self):
+            value = getattr(self, field.name)
+            if callable(value):  # value가 함수라면
+                value = value()  # 인자없이 호출하여 반환값을 value로서 활용합니다.
+            result[field.name] = value
+        return result
+
+
 class DatePickerInput(DateInput):
     template_name = "core/forms/widgets/date_picker.html"
+
+    def __init__(
+        self, attrs=None, format=None, date_picker_options: DatePickerOptions = None
+    ):
+        self.date_picker_options = date_picker_options or DatePickerOptions()
+        super().__init__(attrs, format)
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context["date_picker_options"] = self.date_picker_options.to_dict()
+        return context
 
     class Media:
         css = {
             "all": [
-                # bootstrap5 스타일
-                "//cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs5.min.css",
+                "//cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs5.min.css"
             ],
         }
         js = [
-            "//cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker.min.js",
+            "//cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker.min.js"
         ]
