@@ -1,0 +1,61 @@
+{{ naver_map_options|json_script }}
+
+{% include "django/forms/widgets/text.html" %}
+
+
+<div class="naver-map-container"></div>
+
+<script>
+    (function () {
+        const mapDom = document.currentScript.previousElementSibling;
+        const inputDom = mapDom.previousElementSibling
+        const optionDom = inputDom.previousElementSibling
+
+        const mapOptions = JSON.parse(optionDom.textContent)
+
+        mapDom.style = "width: 400px; height: 400px;"
+
+        const naverMap = new naver.maps.Map(mapDom, {
+            center: null,
+            scaleControl: true,
+            zoomControl: true,
+            zoom:10,
+            ...mapOptions
+        })
+
+        let marker = null
+
+        function updateMap(moveToCenter) {
+            const [lat, lng] = inputDom.value.split(",")
+            const point = new naver.maps.LatLng(lat,lng)
+
+            if(point.lat() > 0 && point.lng() > 0) {
+                if(moveToCenter) naverMap.setCenter(point);
+
+                marker ||= new naver.maps.Marker({map: naverMap});
+                marker.setPosition(point);
+
+            } else {
+                if (marker !== null) {
+                    marker.setMap(null);
+                    marker = null
+                }
+
+                inputDom.value = ""
+            }
+        }
+
+        inputDom.addEventListener("change", () => updateMap(true));
+
+        naver.maps.Event.addListener(naverMap, "click", (e) => {
+            const moveToPoint = e.coord;
+            console.log("clicked", moveToPoint);
+            const lat = moveToPoint.lat();
+            const lng = moveToPoint.lng();
+            inputDom.value = `${lat}, ${lng}`
+            updateMap(false)
+        })
+
+        updateMap(true);
+    })()
+</script>

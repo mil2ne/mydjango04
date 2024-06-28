@@ -13,6 +13,8 @@ from django.forms import (
     DateInput,
 )
 
+from mysite import settings
+
 
 class CounterTextInput(TextInput):
     template_name = "core/forms/widgets/counter_text.html"
@@ -158,4 +160,33 @@ class DatePickerInput(DateInput):
         }
         js = [
             "//cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker.min.js"
+        ]
+
+
+class NaverMapPointInput(TextInput):
+    template_name = "core/forms/widgets/naver_map_point.html"
+
+    def __init__(self, zoom=10, scale_control=True, zoom_control=True, attrs=None):
+        self.zoom = zoom
+        self.scale_control = scale_control
+        self.zoom_control = zoom_control
+        if attrs is None:
+            attrs = {}
+        attrs["readonly"] = "readonly"
+        attrs["autocomplete"] = "off"
+        super().__init__(attrs)
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context["naver_map_options"] = {
+            "zoom": self.zoom,
+            "scaleControl": self.scale_control,
+            "zoomControl": self.zoom_control,
+        }
+        return context
+
+    class Media:
+        js = [
+            "https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId="
+            + settings.NAVER_MAP_POINT_WIDGET_CLIENT_ID
         ]
