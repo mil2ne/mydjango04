@@ -1,0 +1,10 @@
+<div style="margin: 0.5em 0;">
+    {{ form_field.label_tag }}<br/>
+    {{ form_field }}
+    <div style="color: green; font-size: 0.8em">{{ form_field.help_text }}</div>
+    <div style="color: red; font-size: 0.8em">
+        {% for error in form_field.errors %}
+            {{ error }}<br>
+        {% endfor %}
+    </div>
+</div>
