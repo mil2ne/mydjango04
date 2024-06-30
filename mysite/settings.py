@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "accounts",
     "core",
     "django_extensions",
+    "widget_tweaks",
     "hottrack",
     "blog",
     "school",
