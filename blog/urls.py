@@ -21,4 +21,5 @@ urlpatterns = [
     path("reviews/<int:pk>/", views.review_detail, name="review_detail"),
     path("reviews/<int:pk>/edit/", views.review_edit, name="review_edit"),
     path("demo/", views.demo_form, name="demo_form"),
+    path("memo/new/", views.momo_new, name="memo_new"),
 ]
