@@ -1,8 +1,11 @@
+from crispy_bootstrap5.bootstrap5 import FloatingField
+from crispy_forms.bootstrap import PrependedText, TabHolder, Tab
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Submit, Layout, Row, Field
 from django import forms
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 
+from core.crispy_bootstrap5_ext.layout import BorderedTabHolder
 from core.forms.widgets import HorizontalRadioSelect, StarRatingSelect
 from .models import Review
 
@@ -45,7 +48,22 @@ class DemoForm(forms.Form):
         # self.helper.form_action = ""
         # self.helper.form_tag = True
         # self.helper.disable_csrf = False
+        # self.helper.form_class = "form-horizontal"
+        # self.helper.label_class = "col-sm-2"
+        # self.helper.field_class = "col-sm-10"
         self.helper.attrs = {"novalidate": True}
+        self.helper.layout = Layout(
+            FloatingField("title"),
+            "summary",
+            BorderedTabHolder(
+                Tab("내용", "content"),
+                Tab("내용 (영문)", "content_en"),
+            ),
+            Row(
+                Field("author", autocomplete="off", wrapper_class="col-sm-6"),
+                PrependedText("instagram_username", "@", wrapper_class="col-sm-6"),
+            ),
+        )
         self.helper.add_input(Submit("submit", "제출"))
 
     def clean(self):
