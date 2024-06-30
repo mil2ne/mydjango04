@@ -6,10 +6,15 @@
     </ul>
 {% endif %}
 
-{{ form.media }}
+{{ formset.media }}
 
 <form action="" method="post" novalidate>
     {% csrf_token %}
-    <table>{{ form.as_table }}</table>
+    {{ formset.management_form }}
+    {{ formset.non_form_errors }}
+    {% for form in formset %}
+        <table>{{ form.as_table }}</table>
+    {% endfor %}
+
     <input type="submit">
 </form>

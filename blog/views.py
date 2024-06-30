@@ -1,13 +1,15 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.files import File
 from django.db.models import Q
+from django.forms import formset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from vanilla import CreateView, ListView, DetailView, UpdateView, FormView
 
 from blog.forms import ReviewForm, DemoForm, MemoForm
-from blog.models import Post, Review
+from blog.models import Post, Review, Memo
 
 
 # Create your views here.
@@ -109,8 +111,27 @@ review_edit = UpdateView.as_view(
 
 demo_form = FormView.as_view(form_class=DemoForm, template_name="blog/demo_form.html")
 
-momo_new = FormView.as_view(
-    form_class=MemoForm,
-    template_name="blog/momo_form.html",
-    success_url=reverse_lazy("blog:memo_new"),
-)
+
+def momo_new(request):
+    MemoFormSet = formset_factory(form=MemoForm, extra=3)
+    if request.method == "GET":
+        formset = MemoFormSet()
+    else:
+        formset = MemoFormSet(data=request.POST, files=request.FILES)
+        if formset.is_valid():
+            memo_list = []
+
+            for form in formset:
+                if form.has_changed():
+                    memo = Memo(
+                        message=form.cleaned_data["message"],
+                        status=form.cleaned_data["status"],
+                    )
+                    memo_list.append(memo)
+
+            objs = Memo.objects.bulk_create(memo_list)
+
+            messages.success(request, f"메모 {len(objs)}개를 저장했습니다.")
+            return redirect("blog:memo_new")
+
+    return render(request, "blog/momo_form.html", {"formset": formset})
