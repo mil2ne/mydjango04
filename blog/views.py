@@ -1,8 +1,9 @@
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.files import File
 from django.db.models import Q
-from django.forms import formset_factory, modelformset_factory
+from django.forms import formset_factory, modelformset_factory, inlineformset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -112,12 +113,20 @@ review_edit = UpdateView.as_view(
 demo_form = FormView.as_view(form_class=DemoForm, template_name="blog/demo_form.html")
 
 
+@login_required
 def momo_new(request):
     MemoFormSet = modelformset_factory(
-        model=Memo, form=MemoForm, extra=3, can_delete=True
+        # parent_model=User,
+        # parent_model=get_user_model(),
+        model=Memo,
+        form=MemoForm,
+        extra=3,
+        can_delete=True,
     )
 
-    queryset = None
+    # instance = request.user
+
+    queryset = Memo.objects.filter(author=request.user)
     if request.method == "GET":
         formset = MemoFormSet(queryset=queryset)
     else:
@@ -127,6 +136,7 @@ def momo_new(request):
 
             objs = formset.save(commit=False)
             for memo in objs:
+                memo.author = request.user
                 memo.save()
             formset.save_m2m()
 
