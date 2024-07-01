@@ -7,7 +7,7 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 from core.crispy_bootstrap5_ext.layout import BorderedTabHolder
 from core.forms.widgets import HorizontalRadioSelect, StarRatingSelect
-from .models import Review
+from .models import Review, Memo
 from django.db import models
 
 
@@ -75,14 +75,20 @@ class DemoForm(forms.Form):
             raise forms.ValidationError("본문에 대한 요약을 입력해주세요.")
 
 
-class MemoForm(forms.Form):
-    class Status(models.TextChoices):
-        PRIVATE = "V", "비공개"
-        PUBLIC = "P", "공개"
+# class MemoForm(forms.Form):
+#     class Status(models.TextChoices):
+#         PRIVATE = "V", "비공개"
+#         PUBLIC = "P", "공개"
+#
+#     message = forms.CharField(
+#         max_length=140,
+#         widget=forms.TextInput(attrs={"placeholder": "메모를 입력하세요"}),
+#     )
+#
+#     status = forms.ChoiceField(initial=Status.PUBLIC, choices=Status.choices)
 
-    message = forms.CharField(
-        max_length=140,
-        widget=forms.TextInput(attrs={"placeholder": "메모를 입력하세요"}),
-    )
 
-    status = forms.ChoiceField(initial=Status.PUBLIC, choices=Status.choices)
+class MemoForm(forms.ModelForm):
+    class Meta:
+        model = Memo
+        fields = ["message", "status"]

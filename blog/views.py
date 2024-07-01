@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.files import File
 from django.db.models import Q
-from django.forms import formset_factory
+from django.forms import formset_factory, modelformset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -113,25 +113,32 @@ demo_form = FormView.as_view(form_class=DemoForm, template_name="blog/demo_form.
 
 
 def momo_new(request):
-    MemoFormSet = formset_factory(form=MemoForm, extra=3)
+    MemoFormSet = modelformset_factory(
+        model=Memo, form=MemoForm, extra=3, can_delete=True
+    )
+
+    queryset = None
     if request.method == "GET":
-        formset = MemoFormSet()
+        formset = MemoFormSet(queryset=queryset)
     else:
-        formset = MemoFormSet(data=request.POST, files=request.FILES)
+        formset = MemoFormSet(data=request.POST, files=request.FILES, queryset=queryset)
         if formset.is_valid():
-            memo_list = []
+            # objs = formset.save()
 
-            for form in formset:
-                if form.has_changed():
-                    memo = Memo(
-                        message=form.cleaned_data["message"],
-                        status=form.cleaned_data["status"],
-                    )
-                    memo_list.append(memo)
+            objs = formset.save(commit=False)
+            for memo in objs:
+                memo.save()
+            formset.save_m2m()
 
-            objs = Memo.objects.bulk_create(memo_list)
+            if objs:
+                messages.success(request, f"메모 {len(objs)}개를 저장했습니다.")
 
-            messages.success(request, f"메모 {len(objs)}개를 저장했습니다.")
+            if formset.deleted_objects:
+                pk_list = [memo.pk for memo in formset.deleted_objects]
+                Memo.objects.filter(pk__in=pk_list).delete()
+                messages.success(
+                    request, f"메모 {len(formset.deleted_objects)}개를 삭제했습니다."
+                )
             return redirect("blog:memo_new")
 
     return render(request, "blog/momo_form.html", {"formset": formset})
