@@ -1,7 +1,8 @@
-<body>
+{# accounts/templates/accounts/profile_wizard.html #}
+
 {% if messages %}
     {% for message in messages %}
-        {{ message }}<br>
+        {{ message }}<br/>
     {% endfor %}
 {% endif %}
 
@@ -11,17 +12,32 @@
 
 <form action="" method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
+
     {{ wizard.management_form }}
-    <table>{{ wizard.form.as_table }}</table>
+
+    {% if wizard.form.forms %}
+        {# formset 대응 #}
+        {{ wizard.form.management_form }}
+        {% for form in wizard.form.forms %}
+            <table>
+                {{ form.as_table }}
+            </table>
+        {% endfor %}
+    {% else %}
+        {# form 대응 #}
+        <table>{{ wizard.form.as_table }}</table>
+    {% endif %}
 
     {% if wizard.steps.prev %}
-        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">
+        <button name="wizard_goto_step" type="submit"
+                value="{{ wizard.steps.first }}">
             처음 단계
         </button>
-        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">
+        <button name="wizard_goto_step" type="submit"
+                value="{{ wizard.steps.prev }}">
             이전 단계
         </button>
     {% endif %}
-    <input type="submit" value="다음">
+
+    <input type="submit" value="다음" />
 </form>
-</body>
