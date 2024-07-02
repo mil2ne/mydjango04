@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "widget_tweaks",
     "hottrack",
+    "formtools",
     "blog",
     "school",
     "weblog",
