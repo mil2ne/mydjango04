@@ -55,14 +55,14 @@ profile_edit = ProfileUpdateView.as_view()
 
 
 class UserProfileWizardView(LoginRequiredMixin, SessionWizardView):
-    form_list = [UserForm, UserProfileForm]
+    form_list = [("user_form", UserForm), ("profile_form", UserProfileForm)]
     template_name = "accounts/profile_wizard.html"
     file_storage = default_storage
 
     def get_form_instance(self, step):
-        if step == "0":
+        if step == "user_form":
             return self.request.user
-        elif step == "1":
+        elif step == "profile_form":
             profile, __ = Profile.objects.get_or_create(user=self.request.user)
             return profile
         return super().get_form_instance(step)
