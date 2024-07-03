@@ -209,3 +209,5 @@ ADMIN_PREFIX = "secret-admin/"
 
 
 NAVER_MAP_POINT_WIDGET_CLIENT_ID = env.str("NAVER_MAP_POINT_WIDGET_CLIENT_ID")
+
+LOGIN_REDIRECT_URL = "/accounts/profile/"
