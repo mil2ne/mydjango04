@@ -215,3 +215,4 @@ NAVER_MAP_POINT_WIDGET_CLIENT_ID = env.str("NAVER_MAP_POINT_WIDGET_CLIENT_ID")
 
 # LOGIN_REDIRECT_URL = "/accounts/profile/"
 LOGIN_REDIRECT_URL = reverse_lazy("accounts:profile")
+LOGIN_URL = reverse_lazy("accounts:login")
