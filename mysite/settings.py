@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+
+from django.urls import reverse_lazy
 from environ import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -210,4 +212,5 @@ ADMIN_PREFIX = "secret-admin/"
 
 NAVER_MAP_POINT_WIDGET_CLIENT_ID = env.str("NAVER_MAP_POINT_WIDGET_CLIENT_ID")
 
-LOGIN_REDIRECT_URL = "/accounts/profile/"
+# LOGIN_REDIRECT_URL = "/accounts/profile/"
+LOGIN_REDIRECT_URL = reverse_lazy("accounts:profile")

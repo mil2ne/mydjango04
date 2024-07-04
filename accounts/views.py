@@ -1,5 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate
+from django.contrib.auth.views import LoginView as DjangoLoginView
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import default_storage
@@ -103,44 +105,52 @@ class UserProfileWizardView(LoginRequiredMixin, SessionWizardView):
 profile_wizard = UserProfileWizardView.as_view()
 
 
-def login(request):
-    if request.method == "GET":
-        return render(request, "accounts/login_form.html")
-    else:
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+# def login(request):
+#     if request.method == "GET":
+#         return render(request, "accounts/login_form.html")
+#     else:
+#         username = request.POST.get("username")
+#         password = request.POST.get("password")
+#
+#         # authenticate 함수를 통해 유저명/암호를 검증할 수 있습니다.
+#         #   - 인증에 성공하면 관련 User 모델 인스턴스를 반환하며, 실패하면 None을 반환
+#         #   - auth 앱의 AuthenticationForm 에서 사용합니다.
+#         user = authenticate(request, username=username, password=password)
+#         if user is None:
+#             return HttpResponse("인증 실패", status=400)
+#
+#         if user.is_active is False:
+#             return HttpResponse("비활성화된 계정입니다.", status=400)
+#
+#         # 유저명/암호로 검증이 되면, auth 앱의 login 함수에서 로그인 과정을 처리해줍니다.
+#
+#         # 1) 아래 login 함수만 호출하면, 세션을 이용한 로그인 과정 끝.
+#         #   - 세션 키를 생성하고, 세션에 아래 3개 정보를 남기고, CSRF 토큰도 재생성합니다.
+#         #   - User 모델의 .last_login 필드를 현재 시각으로 업데이트합니다.
+#         # auth_login(request, user)
+#
+#         # 2) 혹은 세션 저장 부분만 직접 구현해본다면, 아래와 같습니다.
+#         #   - 인증에 사용된 백엔드가 .backend 속성에 저장되어있습니다.
+#         request.session["_auth_user_backend"] = user.backend
+#         request.session["_auth_user_id"] = user.pk
+#         request.session["_auth_user_hash"] = user.get_session_auth_hash()
+#
+#         # 로그인 성공 페이지로 이동하기
+#         #  디폴트 주소로 settings.LOGIN_REDIRECT_URL (디폴트: "/accounts/profile/")
+#         next_url = (
+#             request.POST.get("next")
+#             or request.GET.get("next")
+#             or settings.LOGIN_REDIRECT_URL
+#         )
+#         return redirect(next_url)
 
-        # authenticate 함수를 통해 유저명/암호를 검증할 수 있습니다.
-        #   - 인증에 성공하면 관련 User 모델 인스턴스를 반환하며, 실패하면 None을 반환
-        #   - auth 앱의 AuthenticationForm 에서 사용합니다.
-        user = authenticate(request, username=username, password=password)
-        if user is None:
-            return HttpResponse("인증 실패", status=400)
 
-        if user.is_active is False:
-            return HttpResponse("비활성화된 계정입니다.", status=400)
+class LoginView(DjangoLoginView):
+    template_name = "accounts/login_form.html"
+    # redirect_authenticated_user = True
 
-        # 유저명/암호로 검증이 되면, auth 앱의 login 함수에서 로그인 과정을 처리해줍니다.
 
-        # 1) 아래 login 함수만 호출하면, 세션을 이용한 로그인 과정 끝.
-        #   - 세션 키를 생성하고, 세션에 아래 3개 정보를 남기고, CSRF 토큰도 재생성합니다.
-        #   - User 모델의 .last_login 필드를 현재 시각으로 업데이트합니다.
-        # auth_login(request, user)
-
-        # 2) 혹은 세션 저장 부분만 직접 구현해본다면, 아래와 같습니다.
-        #   - 인증에 사용된 백엔드가 .backend 속성에 저장되어있습니다.
-        request.session["_auth_user_backend"] = user.backend
-        request.session["_auth_user_id"] = user.pk
-        request.session["_auth_user_hash"] = user.get_session_auth_hash()
-
-        # 로그인 성공 페이지로 이동하기
-        #  디폴트 주소로 settings.LOGIN_REDIRECT_URL (디폴트: "/accounts/profile/")
-        next_url = (
-            request.POST.get("next")
-            or request.GET.get("next")
-            or settings.LOGIN_REDIRECT_URL
-        )
-        return redirect(next_url)
+login = LoginView.as_view()
 
 
 def profile(request):
