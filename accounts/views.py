@@ -1,16 +1,19 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate
-from django.contrib.auth.views import LoginView as DjangoLoginView
+from django.contrib.auth.views import LoginView as DjangoLoginView, LogoutView
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import default_storage
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 from formtools.wizard.views import SessionWizardView
 from vanilla import UpdateView, CreateView
 
@@ -207,3 +210,28 @@ class SignupView(CreateView):
 
 
 signup = SignupView.as_view()
+
+
+# @csrf_protect
+# @never_cache
+# @require_POST
+# def logout(request):
+#     auth_logout(request)
+#
+#     next_url = request.POST.get("next")
+#     if next_url:
+#         url_is_safe = url_has_allowed_host_and_scheme(
+#             url=next_url,
+#             allowed_hosts={request.get_host()},
+#             # require_https=self.request.is_secure(),
+#         )
+#         if url_is_safe:
+#             return redirect(next_url)
+#     return redirect(settings.LOGIN_URL)
+
+# return render(request, "registration/logged_out.html")
+
+logout = LogoutView.as_view(
+    # template_engine="registration/logged_out.html",
+    next_page=settings.LOGIN_URL,
+)
