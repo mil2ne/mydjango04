@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.views import LoginView as DjangoLoginView
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import default_storage
 from django.http import HttpResponse
@@ -10,7 +11,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_protect
 from formtools.wizard.views import SessionWizardView
-from vanilla import UpdateView
+from vanilla import UpdateView, CreateView
 
 from accounts.forms import ProfileForm, UserForm, UserProfileForm, SignupForm
 from accounts.models import Profile
@@ -159,12 +160,29 @@ def profile(request):
     )
 
 
-def signup(request):
-    if request.method == "GET":
-        form = SignupForm()
-    else:
-        form = SignupForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect(settings.LOGIN_URL)
-    return render(request, "accounts/signup_form.html", {"form": form})
+# def signup(request):
+#     if request.method == "GET":
+#         form = SignupForm()
+#     else:
+#         form = SignupForm(data=request.POST)
+#         if form.is_valid():
+#             create_user = form.save()
+#             auth_login(request, create_user)
+#             # return redirect(settings.LOGIN_URL)
+#             return redirect(settings.LOGIN_REDIRECT_URL)
+#     return render(request, "accounts/signup_form.html", {"form": form})
+
+
+class SignupView(CreateView):
+    form_class = SignupForm
+    template_name = "accounts/signup_form.html"
+    success_url = settings.LOGIN_REDIRECT_URL
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        create_user = form.instance
+        auth_login(self.request, create_user)
+        return response
+
+
+signup = SignupView.as_view()
