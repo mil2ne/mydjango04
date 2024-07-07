@@ -4,6 +4,8 @@ from django.contrib.auth.views import LoginView as DjangoLoginView, LogoutView
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordChangeView as DjangoPasswordChangeView
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import default_storage
@@ -22,7 +24,7 @@ from accounts.forms import (
     UserForm,
     UserProfileForm,
     SignupForm,
-    PasswordChangeForm,
+    # PasswordChangeForm,
 )
 from accounts.models import Profile
 from mysite import settings
@@ -243,17 +245,25 @@ logout = LogoutView.as_view(
 )
 
 
-@login_required
-def password_change(request):
-    if request.method == "GET":
-        form = PasswordChangeForm(user=request.user)
-    else:
-        form = PasswordChangeForm(user=request.user, data=request.POST)
-        if form.is_valid():
-            saved_user = form.save()
-            update_session_auth_hash(request, saved_user)
+# @login_required
+# def password_change(request):
+#     if request.method == "GET":
+#         form = PasswordChangeForm(user=request.user)
+#     else:
+#         form = PasswordChangeForm(user=request.user, data=request.POST)
+#         if form.is_valid():
+#             saved_user = form.save()
+#             update_session_auth_hash(request, saved_user)
+#
+#             messages.success(request, "암호를 변경했습니다.")
+#             return redirect("accounts:profile")
+#
+#     return render(request, "accounts/password_change_form.html", {"form": form})
 
-            messages.success(request, "암호를 변경했습니다.")
-            return redirect("accounts:profile")
 
-    return render(request, "accounts/password_change_form.html", {"form": form})
+class PasswordChangeView(DjangoPasswordChangeView):
+    success_url = reverse_lazy("accounts:profile")
+    template_name = "accounts/password_change_form.html"
+
+
+password_change = PasswordChangeView.as_view()
