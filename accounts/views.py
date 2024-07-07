@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.views import LoginView as DjangoLoginView, LogoutView
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
@@ -17,7 +17,13 @@ from django.views.decorators.http import require_POST
 from formtools.wizard.views import SessionWizardView
 from vanilla import UpdateView, CreateView
 
-from accounts.forms import ProfileForm, UserForm, UserProfileForm, SignupForm
+from accounts.forms import (
+    ProfileForm,
+    UserForm,
+    UserProfileForm,
+    SignupForm,
+    PasswordChangeForm,
+)
 from accounts.models import Profile
 from mysite import settings
 
@@ -235,3 +241,19 @@ logout = LogoutView.as_view(
     # template_engine="registration/logged_out.html",
     next_page=settings.LOGIN_URL,
 )
+
+
+@login_required
+def password_change(request):
+    if request.method == "GET":
+        form = PasswordChangeForm(user=request.user)
+    else:
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            saved_user = form.save()
+            update_session_auth_hash(request, saved_user)
+
+            messages.success(request, "암호를 변경했습니다.")
+            return redirect("accounts:profile")
+
+    return render(request, "accounts/password_change_form.html", {"form": form})
