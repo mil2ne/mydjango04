@@ -25,6 +25,7 @@ from accounts.forms import (
     UserProfileForm,
     SignupForm,
     ProfileUserForm,
+    PasswordResetForm,
     # PasswordChangeForm,
 )
 from accounts.models import Profile
@@ -280,3 +281,32 @@ class PasswordChangeView(DjangoPasswordChangeView):
 
 
 password_change = PasswordChangeView.as_view()
+
+
+@csrf_protect
+def password_reset(request):
+    if request.method == "GET":
+        form = PasswordResetForm()
+    else:
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            form.save(request=request)
+            messages.success(
+                request,
+                (
+                    "비밀번호 재설정 이메일을 발송했습니다. 계정이 존재한다면 입력하신 이메일로 "
+                    "비밀번호 재설정 안내문을 확인하실 수 있습니다. "
+                    "만약 이메일을 받지 못했다면 등록하신 이메일을 확인하거나 스팸함을 확인하세요"
+                ),
+            )
+            return redirect("accounts:password_reset")
+
+    return render(
+        request,
+        "registration/password_reset_form.html",
+        {"form": form},
+    )
+
+
+def password_reset_confirm(request, uidb64, token):
+    return HttpResponse("비밀번호 재설정을 요청하셨습니다.")
