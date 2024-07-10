@@ -1,12 +1,25 @@
 import datetime
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Permission, Group
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from core.model_field import DatePickerField
+
+
+def group_add_perm(self, perm_name: str) -> None:
+    group = self
+    app_label, codename = perm_name.split(".", maxsplit=1)
+    permission = Permission.objects.get(
+        content_type__app_label=app_label,
+        codename=codename,
+    )
+    group.permissions.add(permission)
+
+
+setattr(Group, "add_perm", group_add_perm)
 
 
 class User(AbstractUser):
@@ -21,6 +34,16 @@ class User(AbstractUser):
         related_name="following_set",
         related_query_name="following",
     )
+
+    def add_perm(self, perm_name: str) -> None:
+        user = self
+        app_label, codename = perm_name.split(".", maxsplit=1)
+
+        permission = Permission.objects.get(
+            content_type__app_label=app_label,
+            codename=codename,
+        )
+        user.user_permissions.add(permission)
 
 
 class SuperUserManager(models.Manager):
