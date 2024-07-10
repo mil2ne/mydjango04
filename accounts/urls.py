@@ -10,7 +10,7 @@ urlpatterns = [
     path("password_change/", views.password_change, name="password_change"),
     path("password_reset/", views.password_reset, name="password_reset"),
     path(
-        "reset/<uid64>/<token>/",
+        "reset/<uidb64>/<token>/",
         views.password_reset_confirm,
         name="password_reset_confirm",
     ),

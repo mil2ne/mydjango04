@@ -15,6 +15,10 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeView as DjangoPasswordChangeView
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import SetPasswordForm as DjangoSetPasswordForm
+from django.contrib.auth.views import (
+    PasswordResetConfirmView as DjangoPasswordResetConfirmView,
+)
 from django.core.files.storage import default_storage
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -335,59 +339,73 @@ class PasswordResetView(DjangoPasswordResetView):
 password_reset = PasswordResetView.as_view()
 
 
-def password_reset_confirm(request, uid64, token):
-    uid = urlsafe_base64_decode(uid64).decode()
-    user = get_object_or_404(User, pk=uid)
+# def password_reset_confirm(request, uidb64, token):
+#     uid = urlsafe_base64_decode(uidb64).decode()
+#     user = get_object_or_404(User, pk=uid)
+#
+#     context_data = {}
+#     reset_url_token = "set-password"
+#
+#     if token != reset_url_token:
+#         if default_token_generator.check_token(user, token):
+#             request.session["_password_reset_token"] = token
+#             redirect_url = request.path.replace(token, reset_url_token)
+#             return redirect(redirect_url)
+#         else:
+#             # 토큰이 유효하지 않은 경우, 암호 재설정 링크가 유효하지 않다는 메시지를 노출 합니다.
+#             return render(
+#                 request,
+#                 "registration/password_reset_confirm.html",
+#                 {"validlink": False},
+#             )
+#     else:
+#         session_token = request.session.get("_password_reset_token")
+#
+#         if default_token_generator.check_token(user, session_token) is False:
+#             validlink = False
+#         else:
+#             validlink = True
+#
+#             if request.method == "GET":
+#                 form = SetPasswordForm(user=user)
+#             else:
+#                 form = SetPasswordForm(user=user, data=request.POST)
+#                 if form.is_valid():
+#                     form.save()
+#                     del request.session["_password_reset_token"]
+#                     # 암호 재설정 후 자동 로그인
+#                     # auth_login(request, user)
+#
+#                     post_reset_login = (
+#                         True  # 암호 재설정 후 자동 로그인을 수행하고자 할때
+#                     )
+#                     if post_reset_login:
+#                         auth_login(request, user)
+#                         messages.success(
+#                             request, "암호를 재설정했으며, 자동 로그인 처리되었습니다."
+#                         )
+#                         return redirect(settings.LOGIN_REDIRECT_URL)
+#                     else:
+#                         messages.success(
+#                             request, "암호를 재설정했습니다. 로그인해주세요."
+#                         )
+#                         return redirect(settings.LOGIN_REDIRECT_URL)
+#             context_data["form"] = form
+#
+#         context_data["validlink"] = validlink
+#
+#     return render(request, "registration/password_reset_confirm.html", context_data)
 
-    context_data = {}
-    reset_url_token = "set-password"
 
-    if token != reset_url_token:
-        if default_token_generator.check_token(user, token):
-            request.session["_password_reset_token"] = token
-            redirect_url = request.path.replace(token, reset_url_token)
-            return redirect(redirect_url)
-        else:
-            # 토큰이 유효하지 않은 경우, 암호 재설정 링크가 유효하지 않다는 메시지를 노출 합니다.
-            return render(
-                request,
-                "registration/password_reset_confirm.html",
-                {"validlink": False},
-            )
-    else:
-        session_token = request.session.get("_password_reset_token")
+class PasswordResetConfirmView(DjangoPasswordResetConfirmView):
+    post_reset_login = True
+    success_url = settings.LOGIN_REDIRECT_URL
 
-        if default_token_generator.check_token(user, session_token) is False:
-            validlink = False
-        else:
-            validlink = True
+    def form_valid(self, form) -> HttpResponse:
+        response = super().form_valid(form)
 
-            if request.method == "GET":
-                form = SetPasswordForm(user=user)
-            else:
-                form = SetPasswordForm(user=user, data=request.POST)
-                if form.is_valid():
-                    form.save()
-                    del request.session["_password_reset_token"]
-                    # 암호 재설정 후 자동 로그인
-                    # auth_login(request, user)
+        messages.success(self.request, "암호를 재설정했습니다.")
+        return response
 
-                    post_reset_login = (
-                        True  # 암호 재설정 후 자동 로그인을 수행하고자 할때
-                    )
-                    if post_reset_login:
-                        auth_login(request, user)
-                        messages.success(
-                            request, "암호를 재설정했으며, 자동 로그인 처리되었습니다."
-                        )
-                        return redirect(settings.LOGIN_REDIRECT_URL)
-                    else:
-                        messages.success(
-                            request, "암호를 재설정했습니다. 로그인해주세요."
-                        )
-                        return redirect(settings.LOGIN_REDIRECT_URL)
-            context_data["form"] = form
 
-        context_data["validlink"] = validlink
-
-    return render(request, "registration/password_reset_confirm.html", context_data)
+password_reset_confirm = PasswordResetConfirmView.as_view()
