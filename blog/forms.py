@@ -7,7 +7,7 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 from core.crispy_bootstrap5_ext.layout import BorderedTabHolder
 from core.forms.widgets import HorizontalRadioSelect, StarRatingSelect
-from .models import Review, Memo
+from .models import Review, Memo, Tag
 from django.db import models
 
 
@@ -92,3 +92,9 @@ class MemoForm(forms.ModelForm):
     class Meta:
         model = Memo
         fields = ["message", "status"]
+
+
+class TagForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = ["name"]

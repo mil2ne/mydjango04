@@ -9,8 +9,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from vanilla import CreateView, ListView, DetailView, UpdateView, FormView
 
-from blog.forms import ReviewForm, DemoForm, MemoForm
-from blog.models import Post, Review, Memo, MemoGroup
+from blog.forms import ReviewForm, DemoForm, MemoForm, TagForm
+from blog.models import Post, Review, Memo, MemoGroup, Tag
 
 
 # Create your views here.
@@ -150,4 +150,35 @@ def momo_form(request, group_pk):
 
     return render(
         request, "blog/momo_form.html", {"memo_group": memo_group, "formset": formset}
+    )
+
+
+def tag_list(request):
+    tag_qs = Tag.objects.all()
+
+    query = request.GET.get("query", "")
+    if query:
+        tag_qs = tag_qs.filter(name__icontains=query)
+
+    return render(request, "blog/tag_list.html", {"tag_list": tag_qs})
+
+
+def tag_new(request):
+    if request.method == "GET":
+        form = TagForm()
+    else:
+        form = TagForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "태그를 저장했습니다.")
+            return redirect("blog:tag_list")
+
+    template_name = "blog/tag_form.html"
+
+    return render(
+        request,
+        template_name,
+        {
+            "form": form,
+        },
     )

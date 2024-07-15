@@ -1,0 +1,7 @@
+ {% load django_bootstrap5 %}
+<form action="{% url 'blog:tag_new' %}" method="post" autocomplete="off"
+      novalidate>
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" class="btn btn-primary" />
+</form>
