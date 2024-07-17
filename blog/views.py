@@ -160,7 +160,13 @@ def tag_list(request):
     if query:
         tag_qs = tag_qs.filter(name__icontains=query)
 
-    return render(request, "blog/tag_list.html", {"tag_list": tag_qs})
+    # is_htmx = request.META.get("HTTP_HX_REQUEST") == "true"
+    if request.htmx:
+        template_name = "blog/_tag_list.html"
+    else:
+        template_name = "blog/tag_list.html"
+
+    return render(request, template_name, {"tag_list": tag_qs})
 
 
 def tag_new(request):
