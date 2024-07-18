@@ -1,4 +1,5 @@
 {% extends "blog/base.html" %}
+{% load django_bootstrap5 %}
 {% block title %}태그 목록{% endblock %}
 {% block content %}
     <h2>태그 목록</h2>
@@ -8,7 +9,7 @@
          hx-trigger="load"></div>
 
     <button class="btn btn-primary my-3"
-            hx-get="{% url 'blog:tag_list' %}"
+            hx-get="{% url 'blog:tag_list' %}?page={{ request.GET.page|default:1 }}"
             hx-get-with-timestamp
             hx-target="#tag-list-container"
             hx-trigger="click, refresh-tag-list from:body"
@@ -19,6 +20,10 @@
     <div id="tag-list-container">
 
         {% include "blog/_tag_list.html" %}
+    </div>
+
+    <div class="my-3">
+        {% bootstrap_pagination page_obj %}
     </div>
 
     <hr />
