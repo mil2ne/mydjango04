@@ -1,5 +1,5 @@
  {% load django_bootstrap5 %}
- {% bootstrap_messages %}
+ {% include "_messages_as_event.html" %}
 <form class="border my-3 p-3" hx-post="{{ request.get_full_path }}"
       hx-trigger="submit once"
       hx-swap="outerHTML"
