@@ -14,6 +14,7 @@
         <h1>유저 : {{ request.user }}</h1>
         {% block content %}{% endblock %}
     </main>
+    <div id="modal-container"></div>
     <script>
         document.body.addEventListener('htmx:configRequest', function (event) {
           const htmxElement = event.detail.elt;
@@ -26,7 +27,7 @@
     </script>
     {% bootstrap_javascript %}
     <script src="{% static 'core/toast-messages.js' %}"></script>
-    {% include "_messages_as_event.html" %}
+    {% include "core/_messages_as_event.html" %}
     {% block extra-script %}{% endblock %}
 </body>
 </html>

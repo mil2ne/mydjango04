@@ -20,3 +20,5 @@ crispy-bootstrap5==2023.10
 
 django-formtools==2.5.1
 django-htmx==1.18.0
+
+django-template-partials==24.2
