@@ -1,12 +1,5 @@
 {% for tag in tag_list %}
-    <div class="list-group-item"
-         style="cursor: pointer"
-         hx-trigger="click"
-         hx-confirm="{{ tag.name }} 태그를 삭제하시겠습니까?"
-         hx-delete="{% url 'blog:tag_delete' tag.pk %}"
-         hx-swap="delete"
-    >{{ tag.name }}
-    </div>
+    {% include "blog/_tag_list_item.html" %}
     {% if forloop.last %}
         {% if page_obj.has_next %}
         <div class="list-group-item list-group-item-action text-center"
