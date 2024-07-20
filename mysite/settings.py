@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "hottrack",
     "formtools",
     "template_partials",
+    "components",
     "blog",
     "school",
     "weblog",
